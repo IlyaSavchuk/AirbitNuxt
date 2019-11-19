@@ -17,6 +17,11 @@ $ npm run start
 
 # generate static project
 $ npm run generate
+
+# run node server
+# required to create users programatically and getting list of all users 
+$ node server/server.js
+
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
