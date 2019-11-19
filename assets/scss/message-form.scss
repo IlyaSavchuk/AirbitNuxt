@@ -1,0 +1,21 @@
+.message-form {
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px auto 0;
+  width: 100%;
+  max-width: 600px;
+
+  &__text {
+    flex: 0 1 100%;
+  }
+
+  &__send-button {
+    margin-left: 20px;
+    .el-button--primary{
+      background: $scroll-background;
+      border-color: $scroll-background;
+    }
+  }
+}

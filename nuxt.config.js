@@ -1,5 +1,16 @@
 export default {
   mode: 'universal',
+  env: {
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || '',
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN || '',
+    FIREBASE_DB_URL: process.env.FIREBASE_DB_URL || '',
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || '',
+    FIREBASE_APP_ID: process.env.FIREBASE_APP_ID || '',
+    CHATKIT_SECRET_KEY: process.env.CHATKIT_SECRET_KEY || '',
+    CHATKIT_INSTANCE_LOCATOR: process.env.CHATKIT_INSTANCE_LOCATOR || '',
+    CHATKIT_TOKEN_PROVIDER: process.env.CHATKIT_TOKEN_PROVIDER || '',
+    SERVER_BASE_URL: process.env.SERVER_BASE_URL || 'http://localhost:5200'
+  },
   /*
    ** Headers of the page
    */
@@ -23,24 +34,26 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['element-ui/lib/theme-chalk/index.css'],
+  css: ['element-ui/lib/theme-chalk/index.css', '@/assets/scss/app.scss'],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/element-ui'],
+  plugins: ['@/plugins/element-ui', '@/plugins/firebase.js'],
   /*
    ** Nuxt.js dev-modules
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/dotenv'
   ],
   /*
    ** Nuxt.js modules
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/moment'
   ],
   /*
    ** Axios module configuration

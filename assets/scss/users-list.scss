@@ -1,0 +1,30 @@
+.users-list {
+  flex: 0 1 100%;
+  overflow: auto;
+
+  @include scroll;
+
+  &__item {
+    cursor: pointer;
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+    border-right: none;
+    width: 100%;
+    display: inherit;
+    align-items: center;
+    //background: #eaf1f7;
+    color: #808c94;
+
+    &:hover {
+      background-color: ghostwhite;
+    }
+
+    &:not(:last-child) {
+      border-bottom: none;
+    }
+
+    &_active {
+      background-color: $scroll-background;
+    }
+  }
+}

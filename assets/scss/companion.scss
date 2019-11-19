@@ -1,0 +1,12 @@
+.companion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+
+  &__email {
+    font-weight: normal;
+    font-size: 14px;
+    color: gray;
+  }
+}

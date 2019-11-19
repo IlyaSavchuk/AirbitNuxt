@@ -1,0 +1,38 @@
+.chat {
+
+  .left-side{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+  }
+
+  .el {
+    &-container {
+      height: 100vh;
+    }
+
+    &-aside {
+      border-right: 1px solid #eee;
+    }
+    &-main{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+
+  &__header {
+    height: 40px;
+    font-weight: bold;
+    font-size: 18px;
+
+    &_users {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    &_message {
+      border-bottom: 1px solid #eee;
+    }
+  }
+}

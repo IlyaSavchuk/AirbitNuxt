@@ -1,0 +1,13 @@
+$scroll-background: #95b4d2;
+
+@import "scroll";
+@import "auth";
+@import "chat";
+@import "users-list";
+@import "companion";
+@import "messages";
+@import "message-form";
+
+body{
+  color: #808c94;
+}
