@@ -6,7 +6,7 @@
         <el-header class="chat__header chat__header_users">
           Messages
         </el-header>
-        <users />
+        <user-list />
       </el-aside>
       <el-container v-if="currentRoom.id">
         <el-header class="chat__header chat__header_message">
