@@ -23,10 +23,12 @@
 
 <script>
 import { mapState } from 'vuex'
-import UserList from '../../components/UserList'
-import MessagesHeader from '../../components/MessagesHeader'
-import MessageList from '../../components/MessageList'
-import MessageForm from '../../components/MessageForm'
+import {
+  MessageForm,
+  MessageList,
+  MessagesHeader,
+  UserList
+} from '@/components'
 
 export default {
   name: 'Messages',
