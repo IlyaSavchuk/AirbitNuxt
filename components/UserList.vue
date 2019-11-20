@@ -4,7 +4,7 @@
       v-for="(user, key) in otherUsers"
       :key="key"
       @click.native="startConversation(user)"
-      :class="{ 'users-list__item_active': user.id === currentChatWith }"
+      :class="{ 'users-list__item_active': user.id === currentCompanionId }"
       class="users-list__item"
     >
       <el-col :span="3">
@@ -24,22 +24,20 @@ export default {
     avatar: {
       size: 25,
       url: '/images/avatar.png'
-    },
-    currentChatWith: null
+    }
   }),
   computed: {
     ...mapState('chat', ['currentUserId']),
-    ...mapGetters('chat', ['otherUsers'])
+    ...mapGetters('chat', ['otherUsers', 'currentCompanionId'])
   },
   async beforeMount() {
     await this.setUsers()
   },
   methods: {
-    ...mapActions('chat', ['setUsers', 'chatWithUser']),
+    ...mapActions('chat', ['setUsers', 'startConversationWithUser']),
 
     startConversation(user) {
-      this.currentChatWith = user.id
-      this.chatWithUser(user)
+      this.startConversationWithUser(user)
     }
   }
 }

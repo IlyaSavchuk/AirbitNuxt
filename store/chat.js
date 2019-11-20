@@ -11,7 +11,11 @@ export const state = () => ({
   rooms: [],
   currentRoom: {
     id: null,
-    name: null
+    name: null,
+    user: {
+      name: null,
+      id: null
+    }
   },
   currentUserId: null,
   messages: [],
@@ -31,8 +35,15 @@ export const mutations = {
   setCurrentUserId(state, id) {
     state.currentUserId = id
   },
-  setCurrentRoom(state, room) {
-    state.currentRoom = { ...room }
+  setCurrentRoom(state, { room, user }) {
+    state.currentRoom = {
+      id: room.id,
+      name: room.name,
+      user: {
+        name: user.name,
+        id: user.id
+      }
+    }
   },
   addMessage(state, message) {
     state.messages.push(message)
@@ -51,6 +62,9 @@ export const getters = {
   },
   otherUsers(state) {
     return state.users.filter((user) => user.id !== state.currentUserId)
+  },
+  currentCompanionId(state) {
+    return state.currentRoom.user.id
   }
 }
 
@@ -94,42 +108,47 @@ export const actions = {
     }
   },
 
-  async chatWithUser({ state, commit, dispatch }, user) {
+  async startConversationWithUser({ state, commit, dispatch }, user) {
     try {
       commit('setError', '')
-      const roomName = generateRoomName(state.currentUserId, user.id)
-      dispatch('setUserRooms')
 
-      let room = state.rooms.find((room) => room.name === roomName)
+      const room = await dispatch('getOrCreateRoom', user)
 
-      if (!room) {
-        room = await Chatkit.createRoom(user.id)
-        Chatkit.addUserToRoom(room.id, user.id)
-      }
+      commit('setCurrentRoom', { room, user })
 
-      commit('setCurrentRoom', {
-        id: room.id,
-        name: room.name,
-        user: {
-          name: user.name,
-          email: user.id
-        }
-      })
-      commit('clearMessages')
-
-      await Chatkit.subscribeToRoom(room.id, {
-        onMessage: (message) => {
-          commit('addMessage', {
-            name: message.sender.name,
-            username: message.senderId,
-            text: message.text,
-            date: this.$moment(message.createdAt).format('hh:mm:ss D-MM-YYYY')
-          })
-        }
-      })
+      await dispatch('subscribeCurrentUserToRoom', room)
     } catch (error) {
       handleError(commit, error)
     }
+  },
+
+  async getOrCreateRoom({ state, dispatch }, user) {
+    const roomName = generateRoomName(state.currentUserId, user.id)
+    dispatch('setUserRooms')
+
+    let room = state.rooms.find((room) => room.name === roomName)
+
+    if (!room) {
+      room = await Chatkit.createRoom(user.id)
+      Chatkit.addUserToRoom(room.id, user.id)
+    }
+
+    return room
+  },
+
+  subscribeCurrentUserToRoom({ commit }, room) {
+    commit('clearMessages')
+
+    return Chatkit.subscribeToRoom(room.id, {
+      onMessage: (message) => {
+        commit('addMessage', {
+          name: message.sender.name,
+          username: message.senderId,
+          text: message.text,
+          date: this.$moment(message.createdAt).format('hh:mm:ss D-MM-YYYY')
+        })
+      }
+    })
   },
 
   async sendMessage({ commit, state }, message) {
