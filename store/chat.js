@@ -1,4 +1,5 @@
 import Chatkit from '../services/chatkit'
+import generateRoomName from '../utils/generateRoomName'
 
 function handleError(commit, error) {
   const message = error.message || error.info.error_description
@@ -93,7 +94,7 @@ export const actions = {
   async chatWithUser({ state, commit, dispatch }, user) {
     try {
       commit('setError', '')
-      const roomName = Chatkit.generateRoomName(state.currentUserId, user.id)
+      const roomName = generateRoomName(state.currentUserId, user.id)
       dispatch('setUserRooms')
 
       let room = state.rooms.find((room) => room.name === roomName)

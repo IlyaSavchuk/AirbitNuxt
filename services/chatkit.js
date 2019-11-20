@@ -1,5 +1,6 @@
 import { ChatManager, TokenProvider } from '@pusher/chatkit-client'
 import axios from 'axios'
+import generateRoomName from '../utils/generateRoomName'
 
 const INSTANCE_LOCATOR = process.env.CHATKIT_INSTANCE_LOCATOR
 const TOKEN_URL = process.env.CHATKIT_TOKEN_PROVIDER
@@ -27,7 +28,7 @@ export default {
   createRoom(userId) {
     return currentUser.createRoom({
       creatorId: currentUser.id,
-      name: this.generateRoomName(currentUser.id, userId),
+      name: generateRoomName(currentUser.id, userId),
       private: true,
       userIds: [userId]
     })
@@ -63,13 +64,5 @@ export default {
     })
 
     return messageId
-  },
-
-  generateRoomName(userId, targetId) {
-    const names = [userId, targetId]
-
-    names.sort()
-
-    return `${names[0]}-${names[1]}`
   }
 }
