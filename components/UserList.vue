@@ -18,13 +18,15 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
 
+const MOCK_AVATAR = {
+  size: 25,
+  url: '/images/avatar.png'
+}
+
 export default {
   name: 'UserList',
   data: () => ({
-    avatar: {
-      size: 25,
-      url: '/images/avatar.png'
-    }
+    avatar: MOCK_AVATAR
   }),
   computed: {
     ...mapState('chat', ['currentUserId']),
