@@ -22,7 +22,10 @@ export const mutations = {
     state.users = [...users]
   },
   setRooms(state, rooms) {
-    state.rooms = [...rooms]
+    state.rooms = rooms.map((room) => ({
+      id: room.id,
+      name: room.name
+    }))
   },
   setCurrentUserId(state, id) {
     state.currentUserId = id
@@ -75,14 +78,11 @@ export const actions = {
     }
   },
 
-  setUserRooms({ commit }) {
+  async setUserRooms({ commit }) {
     try {
       commit('setError', '')
 
-      const rooms = Chatkit.getUserRooms().map((room) => ({
-        id: room.id,
-        name: room.name
-      }))
+      const rooms = await Chatkit.getUserRooms()
 
       commit('setRooms', rooms)
     } catch (error) {
