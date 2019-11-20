@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'UserList',
@@ -28,16 +28,15 @@ export default {
     currentChatWith: null
   }),
   computed: {
-    ...mapState('chat', ['users', 'currentUserId']),
-    otherUsers() {
-      return this.users.filter((user) => user.id !== this.currentUserId)
-    }
+    ...mapState('chat', ['currentUserId']),
+    ...mapGetters('chat', ['otherUsers'])
   },
   async beforeMount() {
     await this.setUsers()
   },
   methods: {
     ...mapActions('chat', ['setUsers', 'chatWithUser']),
+
     startConversation(user) {
       this.currentChatWith = user.id
       this.chatWithUser(user)

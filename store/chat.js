@@ -48,6 +48,9 @@ export const mutations = {
 export const getters = {
   authenticated(state) {
     return state.currentUserId
+  },
+  otherUsers(state) {
+    return state.users.filter((user) => user.id !== state.currentUserId)
   }
 }
 
