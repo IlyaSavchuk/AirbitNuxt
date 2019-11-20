@@ -1,7 +1,8 @@
 <template>
   <div class="users-list">
     <el-row
-      v-for="user in otherUsers"
+      v-for="(user, key) in otherUsers"
+      :key="key"
       @click.native="startConversation(user)"
       :class="{ 'users-list__item_active': user.id === currentChatWith }"
       class="users-list__item"
