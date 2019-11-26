@@ -8,7 +8,7 @@
         </el-header>
         <user-list />
       </el-aside>
-      <el-container v-if="currentRoom.id">
+      <el-container>
         <el-header class="chat__header chat__header_message">
           <messages-header />
         </el-header>

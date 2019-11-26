@@ -1,6 +1,6 @@
 .users-list {
   flex: 0 1 100%;
-  overflow: auto;
+  overflow-y: auto;
 
   @include scroll;
 
@@ -13,6 +13,7 @@
     display: flex;
     align-items: center;
     color: #808c94;
+    transition: .2s;
 
     &:hover {
       background-color: ghostwhite;
@@ -20,6 +21,12 @@
 
     &_active {
       background-color: $scroll-background;
+    }
+
+    @media (max-width: 540px) {
+      &-text{
+        display: none;
+      }
     }
   }
 }

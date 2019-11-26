@@ -5,12 +5,13 @@
       :key="key"
       @click.native="startConversation(user)"
       :class="{ 'users-list__item_active': user.id === currentCompanionId }"
+      :title="user.name"
       class="users-list__item"
     >
       <el-col :span="3">
-        <el-avatar :size="avatar.size" :src="avatar.url"></el-avatar>
+        <el-avatar :size="avatar.size" :src="avatar.url" />
       </el-col>
-      <el-col :span="21">{{ user.name }}</el-col>
+      <el-col :span="21" class="users-list__item-text">{{ user.name }}</el-col>
     </el-row>
   </div>
 </template>

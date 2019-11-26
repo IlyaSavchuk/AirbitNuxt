@@ -1,37 +1,36 @@
 <template>
   <div ref="messages" class="messages">
-    <div
+    <message-list-item
       v-for="message in messages"
-      :class="{ messages__item_me: currentUserId === message.username }"
-      class="messages__item"
-    >
-      <el-card class="messages__item-text">
-        {{ message.text }}
-      </el-card>
-      <span class="messages__item-date">{{ message.date }}</span>
-    </div>
+      :key="message.id"
+      :message="message"
+      :my="currentUserId === message.username"
+      v-if="message.roomId === currentRoom.id"
+    />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import MessageListItem from '@/components/MessageListItem'
 
 export default {
   name: 'MessageList',
+  components: {
+    MessageListItem
+  },
   computed: {
-    ...mapState('chat', ['messages', 'currentUserId'])
+    ...mapState('chat', ['messages', 'currentUserId', 'currentRoom'])
   },
   watch: {
     messages() {
-      if (this.messages.length) {
-        this.$nextTick(() => this.scrollToBottom())
-      }
+      if (this.messages.length) this.$nextTick(() => this.scrollToBottom())
     }
   },
   methods: {
     scrollToBottom() {
       const elem = this.$refs.messages
-      elem.scrollTop = elem.lastElementChild.offsetTop
+      elem.scrollTop = elem.scrollHeight
     }
   }
 }

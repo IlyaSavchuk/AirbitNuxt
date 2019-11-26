@@ -1,5 +1,5 @@
 export default ({ store, redirect }) => {
-  if (!store.getters['chat/authenticated']) {
-    redirect('/')
+  if (!store.getters['auth/authenticated']) {
+    redirect({ name: 'index' })
   }
 }

@@ -2,8 +2,10 @@
   <el-form @submit.native.prevent="send" class="message-form">
     <el-form-item prop="message" class="message-form__text">
       <el-input
+        ref="input"
         v-model="message"
         :rows="2"
+        @keyup.ctrl.enter.exact.native.prevent="send"
         placeholder="Message"
         type="textarea"
       />
@@ -33,14 +35,14 @@ export default {
   methods: {
     ...mapActions('chat', ['sendMessage']),
     async send() {
+      this.message = this.message.replace(/\r?\n?[\n^]*$/, '')
       const message = this.message
-      if (message.trim() === '') {
-        return
+
+      if (message.trim() !== '') {
+        this.message = ''
+        await this.sendMessage(message)
+        this.$refs.input.focus()
       }
-
-      this.message = ''
-
-      await this.sendMessage(message)
     }
   }
 }

@@ -1,8 +1,29 @@
 .companion {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   height: 100%;
+
+  &-user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &-logout {
+    background: transparent;
+    border: none;
+    color: #111;
+    opacity: 0.5;
+    transition: .2s;
+    padding: 10px 15px;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+    }
+  }
 
   &__email {
     font-weight: normal;

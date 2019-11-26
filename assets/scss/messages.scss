@@ -2,7 +2,7 @@
 
   flex: 0 1 100%;
   overflow-y: auto;
-  padding: 0 15px;
+  padding: 0 5px;
 
   @include scroll;
 
@@ -12,6 +12,12 @@
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 3px;
+    padding: 5px;
+    transition: .2s;
+
+    &:hover {
+      background: rgba(128, 140, 148, 0.1);
+    }
 
     &-text {
       max-width: 60%;
@@ -20,6 +26,13 @@
       margin-bottom: 5px;
       background: #eaf1f7;
       color: #808c94;
+      padding: 10px;
+      white-space: pre-wrap;
+      line-height: 15px;
+
+      @media (max-width: 540px) {
+        max-width: calc(100% - 15px);
+      }
 
       .el-card__body {
         padding: 8px;

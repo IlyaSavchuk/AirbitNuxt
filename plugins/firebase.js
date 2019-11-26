@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import firebase, { auth } from 'firebase'
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -8,8 +8,15 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID
 }
 
-const app = firebase.apps.length
-  ? firebase.app()
-  : firebase.initializeApp(firebaseConfig)
+if (firebase.apps.length) firebase.app()
+else firebase.initializeApp(firebaseConfig)
 
-export const db = app.database(firebaseConfig.databaseURL)
+export default ({ store, redirect }) => {
+  auth().onAuthStateChanged((user) => {
+    if (user) {
+      store.commit('auth/setUser', { uid: user.uid, email: user.email })
+      store.dispatch('chat/login', user.email)
+      redirect({ name: 'messages' })
+    }
+  })
+}

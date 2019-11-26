@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import { auth } from 'firebase'
 import { mapActions } from 'vuex'
 import authRules from '../rules/auth'
 
@@ -61,8 +61,8 @@ export default {
     rules: authRules.login
   }),
   methods: {
-    ...mapActions({
-      loginUser: 'chat/login'
+    ...mapActions('chat', {
+      loginUser: 'login'
     }),
     async login() {
       const valid = await this.$refs.form.validate()
@@ -74,12 +74,10 @@ export default {
       this.loading = true
 
       try {
-        await firebase
-          .auth()
-          .signInWithEmailAndPassword(
-            this.loginData.email,
-            this.loginData.password
-          )
+        await auth().signInWithEmailAndPassword(
+          this.loginData.email,
+          this.loginData.password
+        )
 
         await this.loginUser(this.loginData.email)
 

@@ -3,21 +3,28 @@
   .left-side{
     display: flex;
     flex-direction: column;
-    width: 300px;
+    flex: 0 1 300px;
   }
 
   .el {
     &-container {
       height: 100vh;
+      flex: 0 1 100%;
     }
 
     &-aside {
       border-right: 1px solid #eee;
+      @media (max-width: 540px) {
+        flex: 0 1 50px;
+      }
     }
     &-main{
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      @media (max-width: 540px) {
+        padding: 5px;
+      }
     }
   }
 
@@ -29,6 +36,11 @@
     &_users {
       padding: 20px;
       border-bottom: 1px solid #eee;
+      @media (max-width: 540px) {
+        color: transparent;
+        height: 0 !important;
+        padding: 0;
+      }
     }
 
     &_message {

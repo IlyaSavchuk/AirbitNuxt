@@ -19,8 +19,16 @@ export default {
       tokenProvider: new TokenProvider({ url: TOKEN_URL }),
       userId
     })
-
-    currentUser = await chatManager.connect()
+    // TODO: cache event for detail
+    currentUser = await chatManager.connect({
+      onAddedToRoom: (room) => {},
+      onRemovedFromRoom: (room) => {},
+      onRoomUpdated: (room) => {},
+      onRoomDeleted: (room) => {},
+      onUserStartedTyping: (room, user) => {},
+      onUserStoppedTyping: (room, user) => {},
+      onPresenceChanged: (state, user) => {}
+    })
 
     return currentUser
   },

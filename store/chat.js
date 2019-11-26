@@ -29,7 +29,8 @@ export const mutations = {
   setRooms(state, rooms) {
     state.rooms = rooms.map((room) => ({
       id: room.id,
-      name: room.name
+      name: room.name,
+      unreadCount: room.unreadCount
     }))
   },
   setCurrentUserId(state, id) {
@@ -142,10 +143,11 @@ export const actions = {
     return Chatkit.subscribeToRoom(room.id, {
       onMessage: (message) => {
         commit('addMessage', {
+          roomId: message.roomId,
           name: message.sender.name,
           username: message.senderId,
           text: message.text,
-          date: this.$moment(message.createdAt).format('hh:mm:ss D-MM-YYYY')
+          date: message.createdAt
         })
       }
     })
@@ -154,9 +156,7 @@ export const actions = {
   async sendMessage({ commit, state }, message) {
     try {
       commit('setError', '')
-      const messageId = await Chatkit.sendMessage(message, state.currentRoom.id)
-
-      return messageId
+      return await Chatkit.sendMessage(message, state.currentRoom.id)
     } catch (error) {
       handleError(commit, error)
     }
