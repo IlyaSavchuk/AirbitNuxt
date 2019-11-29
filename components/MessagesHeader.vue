@@ -11,7 +11,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { auth } from 'firebase'
 
 export default {
   name: 'MessagesHeader',
@@ -26,9 +25,8 @@ export default {
       logoutUser: 'logout'
     }),
     logout() {
-      auth().signOut()
       this.logoutUser()
-      this.$router.push({ name: 'index', force: true })
+      this.$router.push({ name: 'login' })
     }
   }
 }

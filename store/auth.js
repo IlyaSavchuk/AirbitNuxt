@@ -1,24 +1,28 @@
+import app from '@/services/firebase'
+
 export const state = () => ({
-  user: null
+  user: null,
+  authenticated: false
 })
 
 export const mutations = {
   setUser(state, user) {
-    state.user = { ...user }
+    state.user = user
   },
-  clearUser(state) {
-    state.user = null
-  }
-}
-
-export const getters = {
-  authenticated(state) {
-    return !!state.user
+  setAuthenticated(state, payload) {
+    state.authenticated = payload
   }
 }
 
 export const actions = {
-  logout({ store, commit }) {
-    commit('clearUser', null)
+  login({ commit }, userData) {
+    commit('setUser', userData)
+    commit('setAuthenticated', true)
+  },
+  async logout({ commit }) {
+    await app.auth().signOut()
+
+    commit('setUser', null)
+    commit('setAuthenticated', false)
   }
 }

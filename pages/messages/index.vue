@@ -32,8 +32,8 @@ import {
 
 export default {
   name: 'Messages',
+  middleware: 'isAuth',
   components: { MessageForm, MessageList, MessagesHeader, UserList },
-  middleware: ['auth'],
   computed: {
     ...mapState('chat', ['currentRoom', 'error'])
   }
