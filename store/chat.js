@@ -1,164 +1,92 @@
-import Chatkit from '../services/chatkit'
-import generateRoomName from '../utils/generateRoomName'
-
-function handleError(commit, error) {
-  const message = error.message || error.info.error_description
-  commit('setError', message)
-}
+import ChatKit from '@/services/chatkit'
+import User from '@/models/User'
 
 export const state = () => ({
-  users: [],
-  rooms: [],
-  currentRoom: {
-    id: null,
-    name: null,
-    user: {
-      name: null,
-      id: null
-    }
+  user: {
+    rooms: []
   },
-  currentUserId: null,
-  messages: [],
-  error: null
+  mess: [],
+  currentRoomId: ''
 })
 
 export const mutations = {
+  setUser: (state, user) => (state.user = user),
+
   setUsers(state, users) {
     state.users = [...users]
   },
-  setRooms(state, rooms) {
-    state.rooms = rooms.map((room) => ({
-      id: room.id,
-      name: room.name,
-      unreadCount: room.unreadCount
-    }))
+
+  addMes: (state, message) => {
+    state.mess.push({
+      id: message,
+      roomId: message.roomId,
+      parts: message.parts,
+      createdAt: message.createdAt,
+      senderId: message.senderId
+    })
   },
-  setCurrentUserId(state, id) {
-    state.currentUserId = id
-  },
-  setCurrentRoom(state, { room, user }) {
-    state.currentRoom = {
-      id: room.id,
-      name: room.name,
-      user: {
-        name: user.name,
-        id: user.id
-      }
-    }
-  },
-  addMessage(state, message) {
-    state.messages.push(message)
-  },
-  clearMessages(state) {
-    state.messages = []
-  },
-  setError(state, error) {
-    state.error = error
-  }
+  setCurrentRoomId: (state, room) => (state.currentRoomId = room.id)
 }
 
 export const getters = {
-  authenticated(state) {
-    return state.currentUserId
-  },
-  otherUsers(state) {
-    return state.users.filter((user) => user.id !== state.currentUserId)
-  },
-  currentCompanionId(state) {
-    return state.currentRoom.user.id
+  getRooms: (state) => {
+    return state.user
+      ? [...state.user.rooms].sort((a, b) => (+new Date(a.lastMessageAt) > +new Date(b.lastMessageAt) ? 1 : -1))
+      : []
   }
 }
 
 export const actions = {
-  async login({ commit, dispatch }, email) {
-    try {
-      commit('setError', '')
-
-      const { id } = await Chatkit.connectUser(email)
-
-      commit('setCurrentUserId', id)
-      dispatch('setUserRooms')
-    } catch (error) {
-      handleError(commit, error)
-    }
-  },
-
-  async setUsers({ commit }) {
-    try {
-      commit('setError', '')
-
-      const {
-        data: { users }
-      } = await Chatkit.getUsers()
-
-      commit('setUsers', users)
-    } catch (error) {
-      handleError(commit, error)
-    }
-  },
-
-  async setUserRooms({ commit }) {
-    try {
-      commit('setError', '')
-
-      const rooms = await Chatkit.getUserRooms()
-
-      commit('setRooms', rooms)
-    } catch (error) {
-      handleError(commit, error)
-    }
-  },
-
-  async startConversationWithUser({ state, commit, dispatch }, user) {
-    try {
-      commit('setError', '')
-
-      const room = await dispatch('getOrCreateRoom', user)
-
-      commit('setCurrentRoom', { room, user })
-
-      await dispatch('subscribeCurrentUserToRoom', room)
-    } catch (error) {
-      handleError(commit, error)
-    }
-  },
-
-  async getOrCreateRoom({ state, dispatch }, user) {
-    const roomName = generateRoomName(state.currentUserId, user.id)
-    dispatch('setUserRooms')
-
-    let room = state.rooms.find((room) => room.name === roomName)
-
-    if (!room) {
-      room = await Chatkit.createRoom(user.id)
-      Chatkit.addUserToRoom(room.id, user.id)
-    }
-
-    return room
-  },
-
-  subscribeCurrentUserToRoom({ commit }, room) {
-    commit('clearMessages')
-
-    return Chatkit.subscribeToRoom(room.id, {
-      onMessage: (message) => {
-        commit('addMessage', {
-          roomId: message.roomId,
-          name: message.sender.name,
-          username: message.senderId,
-          text: message.text,
-          date: message.createdAt
-        })
-      }
+  async login({ commit, state, dispatch }, userId) {
+    const user = await ChatKit(userId, {
+      onAddedToRoom: (room) => dispatch('onAddedToRoom', room),
+      onRemovedFromRoom: (room) => dispatch('onRemovedFromRoom', room),
+      onRoomUpdated: (room) => dispatch('onRoomUpdated', room),
+      onRoomDeleted: (room) => dispatch('onRoomDeleted', room),
+      onUserStartedTyping: (room, user) => dispatch('onUserStartedTyping', { room, user }),
+      onUserStoppedTyping: (room, user) => dispatch('onUserStoppedTyping', { room, user }),
+      onUserJoinedRoom: (room, user) => dispatch('onUserJoinedRoom', { room, user }),
+      onUserLeftRoom: (room, user) => dispatch('onUserLeftRoom', { room, user }),
+      onPresenceChanged: (state, user) => dispatch('onPresenceChanged', { state, user }),
+      onNewReadCursor: (cursor) => dispatch('onNewReadCursor', cursor)
     })
+
+    console.log(user)
+
+    commit('setUser', new User(user, (message) => dispatch('onMessage', message)))
   },
 
-  async sendMessage({ commit, state }, message) {
-    try {
-      commit('setError', '')
-      return await Chatkit.sendMessage(message, state.currentRoom.id)
-    } catch (error) {
-      handleError(commit, error)
-    }
+  onAddedToRoom({ commit }, room) {},
+  onRemovedFromRoom({ commit }, room) {},
+  onRoomUpdated({ commit }, room) {},
+  onRoomDeleted({ commit }, room) {},
+  onUserStartedTyping({ commit }, { room, user }) {},
+  onUserStoppedTyping({ commit }, { room, user }) {},
+  onUserJoinedRoom({ commit }, { room, user }) {},
+  onUserLeftRoom({ commit }, { room, user }) {},
+  onPresenceChanged({ commit }, { state, user }) {},
+  onNewReadCursor({ commit }, cursor) {},
+
+  onMessage({ commit }, message) {
+    console.log(message)
+    // commit('addMes', message)
+  },
+  chooseRoom({ commit, dispatch }, room) {
+    commit('setCurrentRoomId', room)
+    dispatch('fetchMessages', room)
+  },
+  async fetchMessages({ state, commit, dispatch }, room) {
+    // eslint-disable-next-line no-unused-vars
+    console.log(room)
+    const messages = await state.user.fetchMessages(room)
+
+    dispatch('setRoomMessages', { room, messages })
+    console.log(messages)
+    // commit('')
+  },
+
+  setRoomMessages({ state }, { room, messages }) {
+    if (!room.messages) room.messages = []
+    room.messages.push([...messages])
   }
 }

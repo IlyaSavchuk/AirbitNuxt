@@ -1,9 +1,5 @@
 <template>
-  <div
-    :class="{ messages__item_me: my }"
-    :title="presentDate"
-    class="messages__item"
-  >
+  <div :class="{ messages__item_me: my }" :title="presentDate" class="messages__item">
     <el-card v-html="message.text" class="messages__item-text" />
     <span class="messages__item-date">{{ relativeDate }}</span>
   </div>
@@ -39,16 +35,16 @@ export default {
   },
   methods: {
     startTimer() {
-      const self = this
-      this.timer = setTimeout(function update(_this) {
-        self.updateDate()
-        self.delay = self.updateDelay(self.iteration, self.delay)
-        self.iteration++
-        self.timer = setTimeout(update, self.delay)
-      }, this.delay)
+      this.timer = setTimeout(this.update, this.delay)
     },
-    updateDelay(i, delay) {
-      return Math.round(delay * Math.exp(i))
+    update() {
+      this.updateDate()
+      this.delay = this.updateDelay(this.iteration, this.delay)
+      this.iteration++
+      this.timer = setTimeout(this.update, this.delay)
+    },
+    updateDelay(iteration, delay) {
+      return Math.round(delay * Math.exp(iteration))
     },
     updateDate() {
       this.relativeDate = this.originDate.fromNow()

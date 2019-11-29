@@ -1,6 +1,6 @@
-import UserList from './UserList'
+import RoomList from './RoomList'
 import MessagesHeader from './MessagesHeader'
 import MessageList from './MessageList'
 import MessageForm from './MessageForm'
 
-export { UserList, MessagesHeader, MessageList, MessageForm }
+export { RoomList, MessagesHeader, MessageList, MessageForm }

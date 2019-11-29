@@ -6,7 +6,7 @@
         <el-header class="chat__header chat__header_users">
           Messages
         </el-header>
-        <user-list />
+        <room-list />
       </el-aside>
       <el-container>
         <el-header class="chat__header chat__header_message">
@@ -23,17 +23,12 @@
 
 <script>
 import { mapState } from 'vuex'
-import {
-  MessageForm,
-  MessageList,
-  MessagesHeader,
-  UserList
-} from '@/components'
+import { MessageForm, MessageList, MessagesHeader, RoomList } from '@/components'
 
 export default {
   name: 'Messages',
   middleware: 'isAuth',
-  components: { MessageForm, MessageList, MessagesHeader, UserList },
+  components: { MessageForm, MessageList, MessagesHeader, RoomList },
   computed: {
     ...mapState('chat', ['currentRoom', 'error'])
   }
