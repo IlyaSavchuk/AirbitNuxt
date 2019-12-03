@@ -13,11 +13,10 @@ export default (userId, handlers) => {
     onAddedToRoom: handlers.onAddedToRoom,
     onRemovedFromRoom: handlers.onRemovedFromRoom,
     onRoomUpdated: handlers.onRoomUpdated,
-    onRoomDeleted: handlers.onRoomDeleted
-    // TODO
-    //   onUserStartedTyping: handlers.onUserStartedTyping,
-    //   onUserStoppedTyping: handlers.onUserStoppedTyping,
-    //   onPresenceChanged: handlers.onPresenceChanged
+    onRoomDeleted: handlers.onRoomDeleted,
+    onUserStartedTyping: handlers.onUserStartedTyping,
+    onUserStoppedTyping: handlers.onUserStoppedTyping,
+    onPresenceChanged: handlers.onPresenceChanged
   })
 
   return currentUser

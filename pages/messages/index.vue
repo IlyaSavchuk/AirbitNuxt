@@ -1,18 +1,30 @@
 <template>
-  <div class="chat">
+  <div @keydown.esc="esc" class="chat">
     <el-alert v-if="error" title="error" type="error" center="" />
     <el-container>
-      <el-aside width="" class="left-side">
-        <el-header class="chat__header chat__header_users">
-          Messages
-        </el-header>
+      <el-row :class="{ hide: showAside }" class="left-side">
+        <el-row type="flex" justify="space-between" align="middle" class="chat__header chat__header_users">
+          <span>Messages</span>
+          <el-row>
+            <el-button @click="logout" icon="el-icon-right" circle />
+            <el-badge :value="commonUnreadCount" :hidden="!commonUnreadCount" class="aside-button" is-dot>
+              <el-button @click="asideToggle" icon="el-icon-close" circle />
+            </el-badge>
+          </el-row>
+        </el-row>
         <room-list />
-      </el-aside>
+      </el-row>
       <el-container>
         <el-header class="chat__header chat__header_message">
-          <messages-header />
+          <messages-header>
+            <template slot="button">
+              <el-badge :value="commonUnreadCount" :hidden="!commonUnreadCount" is-dot class="aside-button">
+                <el-button @click="asideToggle" icon="el-icon-more" circle />
+              </el-badge>
+            </template>
+          </messages-header>
         </el-header>
-        <el-main>
+        <el-main v-if="currentRoom">
           <message-list />
           <message-form />
         </el-main>
@@ -22,15 +34,34 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
 import { MessageForm, MessageList, MessagesHeader, RoomList } from '@/components'
 
 export default {
   name: 'Messages',
   middleware: 'isAuth',
   components: { MessageForm, MessageList, MessagesHeader, RoomList },
+  data: () => ({
+    showAside: false
+  }),
   computed: {
-    ...mapState('chat', ['currentRoom', 'error'])
+    ...mapState('chat', ['currentRoom', 'error']),
+    ...mapGetters('chat', ['commonUnreadCount'])
+  },
+  methods: {
+    ...mapActions('auth', {
+      logoutUser: 'logout'
+    }),
+    esc() {
+      alert(1)
+    },
+    asideToggle() {
+      this.showAside = !this.showAside
+    },
+    logout() {
+      this.logoutUser()
+      this.$router.push({ name: 'login' })
+    }
   }
 }
 </script>

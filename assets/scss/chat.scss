@@ -1,9 +1,26 @@
 .chat {
 
-  .left-side{
+  .left-side {
     display: flex;
     flex-direction: column;
-    flex: 0 1 300px;
+    flex: 0 1 350px;
+    border-right: 1px solid #eee;
+
+    @media (max-width: 540px) {
+      position: fixed;
+      min-height: 100vh;
+      z-index: 1;
+      width: calc(100% - 50px);
+      background: #fff;
+      top: 0;
+      left: 0;
+      //transition: .5s;
+      box-shadow: 1px 0 51px 0 #000;
+
+      &.hide {
+        left: calc(-100% - 50px);
+      }
+    }
   }
 
   .el {
@@ -12,13 +29,7 @@
       flex: 0 1 100%;
     }
 
-    &-aside {
-      border-right: 1px solid #eee;
-      @media (max-width: 540px) {
-        flex: 0 1 50px;
-      }
-    }
-    &-main{
+    &-main {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -29,22 +40,33 @@
   }
 
   &__header {
-    height: 40px;
+    height: 60px;
     font-weight: bold;
     font-size: 18px;
 
     &_users {
       padding: 20px;
       border-bottom: 1px solid #eee;
-      @media (max-width: 540px) {
-        color: transparent;
-        height: 0 !important;
-        padding: 0;
-      }
+      //@media (max-width: 540px) {
+      //  color: transparent;
+      //height: 0 !important;
+      //padding: 0;
+      //}
     }
 
     &_message {
       border-bottom: 1px solid #eee;
     }
   }
+}
+
+.aside-button {
+  display: none;
+}
+
+@media (max-width: 540px) {
+  .aside-button {
+    display: inline-block;
+  }
+
 }

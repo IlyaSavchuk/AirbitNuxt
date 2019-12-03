@@ -5,13 +5,21 @@
         ref="input"
         v-model="message"
         :rows="2"
-        @keyup.ctrl.enter.exact.native.prevent="send"
+        @keyup.enter.exact.native.prevent="send"
         placeholder="Message"
         type="textarea"
       />
     </el-form-item>
     <el-form-item class="message-form__send-button">
-      <el-button type="primary" native-type="submit" icon="el-icon-edit" circle block size="small"> </el-button>
+      <el-button
+        type="primary"
+        native-type="submit"
+        icon="el-icon-edit"
+        circle
+        block
+        size="small"
+        title="Press Enter to send"
+      />
     </el-form-item>
   </el-form>
 </template>

@@ -1,36 +1,37 @@
 <template>
   <el-row type="flex" justify="space-between" class="companion">
-    <el-col>
-      <div class="companion-user">
-        <div class="companion__name">{{ user.name }}</div>
-        <div class="companion__email">{{ user.id }}</div>
+    <el-row type="flex" justify="space-between" class="companion">
+      <div>
+        <div class="companion-user">
+          <div class="companion__name">{{ user.name }}</div>
+          <div class="companion__email">{{ user.id }}</div>
+        </div>
       </div>
-    </el-col>
-    <el-col>
-      <button @click="logout" class="companion-logout">logout</button>
-    </el-col>
+      <div v-if="Object.keys(recipier).length">
+        <el-icon name="right" />
+      </div>
+      <div>
+        <div class="companion-user">
+          <div class="companion__name">{{ recipier.name }}</div>
+          <div class="companion__email">{{ recipier.id }}</div>
+        </div>
+      </div>
+    </el-row>
+    <slot name="button" />
   </el-row>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'MessagesHeader',
   computed: {
-    ...mapState('chat', ['user'])
-    // user() {
-    //   // return this.currentRoom.user
-    // }
-  },
-  methods: {
-    ...mapActions('auth', {
-      logoutUser: 'logout'
-    }),
-    logout() {
-      this.logoutUser()
-      this.$router.push({ name: 'login' })
+    ...mapState('chat', ['user', 'currentRoom']),
+    recipier() {
+      return this.currentRoom.users ? this.currentRoom.users.find(user => user.id !== this.user.id) : {}
     }
-  }
+  },
+  methods: {}
 }
 </script>

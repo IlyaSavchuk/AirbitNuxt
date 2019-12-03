@@ -25,10 +25,11 @@
       display: inline-block;
       margin-bottom: 5px;
       background: #eaf1f7;
-      color: #808c94;
+      color: #6e7a82;
       padding: 10px;
       white-space: pre-wrap;
-      line-height: 15px;
+      font-size: 14px;
+      line-height: 16px;
 
       @media (max-width: 540px) {
         max-width: calc(100% - 15px);

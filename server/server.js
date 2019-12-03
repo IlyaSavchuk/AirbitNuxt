@@ -26,7 +26,7 @@ app.post('/users', (req, res) => {
     .then(() => {
       res.sendStatus(201)
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(err.status).json(err)
     })
 })
@@ -34,12 +34,12 @@ app.post('/users', (req, res) => {
 app.get('/users', (req, res) => {
   chatkit
     .getUsers({})
-    .then((users) => {
+    .then(users => {
       res.status(200).send({
         users
       })
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).send({
         err
       })
