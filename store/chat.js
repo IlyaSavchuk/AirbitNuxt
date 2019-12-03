@@ -1,11 +1,12 @@
-import ChatKit from '@/services/chatkit'
+import ChatKit, { getUsers } from '@/services/chatkit'
 import User from '@/models/User'
 
 export const state = () => ({
   user: {
     rooms: []
   },
-  currentRoom: ''
+  currentRoom: '',
+  users: []
 })
 
 export const mutations = {
@@ -13,18 +14,20 @@ export const mutations = {
 
   setCurrentRoom: (state, room) => (state.currentRoom = room),
 
-  addMessagesToCurrentRoom: (state, messages) => state.currentRoom.messages.push(...messages),
-
-  addMessageToCurrentRoom: (state, message) => state.currentRoom.messages.push(message),
+  addRoom: (state, room) => state.user.rooms.push(room),
 
   addMessagesToRoom: (state, { roomId, messages }) =>
     state.user.rooms.find(room => room.id === roomId).messages.push(...messages),
 
-  addMessageToRoom: (state, { roomId, message }) =>
-    state.user.rooms.find(room => room.id === roomId).messages.push(message),
+  addMessageToRoom: (state, { roomId, message }) => {
+    const room = state.user.rooms.find(room => room.id === roomId)
+    room.messages.push(message)
+  },
 
   addOldMessageToRoom: (state, { roomId, message }) =>
-    state.user.rooms.find(room => room.id === roomId).messages.unshift(message)
+    state.user.rooms.find(room => room.id === roomId).messages.unshift(message),
+
+  setUsers: (state, users) => (state.users = [...users])
 }
 
 export const getters = {
@@ -34,7 +37,9 @@ export const getters = {
       : []
   },
   commonUnreadCount: state =>
-    state.user.rooms ? state.user.rooms.map(room => room.unreadCount).reduce((sum, value) => sum + value, 0) : 0
+    state.user.rooms ? state.user.rooms.map(room => room.unreadCount).reduce((sum, value) => sum + value, 0) : 0,
+
+  otherUsers: state => state.users.filter(user => user.id !== state.user.id)
 }
 
 export const actions = {
@@ -52,8 +57,6 @@ export const actions = {
       onNewReadCursor: cursor => dispatch('onNewReadCursor', cursor)
     })
 
-    console.log(user)
-
     const userHandlers = {
       onMessage: message => dispatch('onMessage', message)
     }
@@ -61,7 +64,19 @@ export const actions = {
     commit('setUser', new User(user, userHandlers))
   },
 
-  onAddedToRoom({ state, commit }, room) {},
+  async onAddedToRoom({ state, commit, dispatch }, room) {
+    const subscribeRoom = await state.user.subscribeToRoomMultipart({
+      roomId: room.id,
+      hooks: {
+        onMessage: message => dispatch('onMessage', message)
+      },
+      messageLimit: 10
+    })
+
+    subscribeRoom.messages = []
+
+    commit('addRoom', subscribeRoom)
+  },
   onRemovedFromRoom({ commit }, room) {},
   onRoomUpdated({ commit }, room) {},
   onRoomDeleted({ commit }, room) {},
@@ -93,20 +108,28 @@ export const actions = {
     commit('addOldMessageToRoom', { roomId: state.currentRoom.id, messages })
   },
 
-  // async updateMessages({ state, commit, dispatch }, { room, initialId }) {
-  //   const messages = await state.user.fetchMessages(room, initialId)
-  //   return messages
-  // },
-
   fillRoomMessages({ state, commit }, { room, messages }) {
     commit('addMessagesToRoom', { roomId: room.id, messages })
   },
-  sendMessage({ state, dispatch }, message) {
-    state.user.sendMessage(state.currentRoom, message)
-    console.log(state.currentRoom)
-    // dispatch('updateMessages')
+
+  async sendMessage({ state, dispatch }, message) {
+    await state.user.sendMessage(state.currentRoom, message)
   },
+
   setReadMessage({ state }, message) {
     state.user.setReadMessage(state.currentRoom, message)
+  },
+
+  async getUsers({ state, commit }) {
+    const { data } = await getUsers()
+    commit('setUsers', data.users)
+  },
+
+  async createRoom({ state, dispatch }, { name, userId }) {
+    await state.user.createRoom({
+      name,
+      private: true,
+      addUserIds: [userId]
+    })
   }
 }

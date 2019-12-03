@@ -1,5 +1,5 @@
 <template>
-  <div class="messages" ref="list">
+  <div ref="list" class="messages">
     <message-list-item
       v-for="message in currentRoom.messages"
       :key="message.id"
@@ -17,14 +17,6 @@ export default {
   name: 'MessageList',
   components: {
     MessageListItem
-  },
-  mounted() {
-    this.$el.addEventListener('scroll', event => {
-      console.log(event.target.scrollTop)
-      console.log(event.target.scrollHeight)
-      console.log(event)
-      // if (event.target.scrollTop < 10) this.fetchOldMessages()
-    })
   },
   computed: {
     ...mapState('chat', ['user', 'currentRoom']),
@@ -45,6 +37,9 @@ export default {
         }
       })
     }
+  },
+  mounted() {
+    this.$el.addEventListener('scroll', event => {})
   },
   methods: {
     ...mapActions('chat', ['setReadMessage', 'fetchOldMessages']),

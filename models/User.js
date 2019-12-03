@@ -9,7 +9,6 @@ const roomsConstructor = (rooms, subscribeToRoomMultipart, onMessage) =>
     })
 
     room.messages = []
-    // room.users = []
 
     return room
   })
@@ -25,29 +24,22 @@ export default class User {
       sendMultipartMessage,
       sendSimpleMessage,
       subscribeToRoomMultipart,
-      subscribeToRoom,
       fetchMultipartMessages,
       updateUser,
-      setReadCursor
+      setReadCursor,
+      createRoom,
+      roomStore
     } = {},
     handlers
   ) {
     this.id = id
     this.name = name
-    // this.users = users
-    // this.sendMessage = sendMessage
-    this.sendMultipartMessage = sendMultipartMessage
     this.sendSimpleMessage = sendSimpleMessage
     this.subscribeToRoomMultipart = subscribeToRoomMultipart
-    this.subscribeToRoom = subscribeToRoom
     this.fetchMultipartMessages = fetchMultipartMessages
-    // this.rooms = rooms
     this.rooms = roomsConstructor(rooms, subscribeToRoomMultipart, handlers.onMessage)
-    // console.log(this.rooms)
-    this.updateUser = updateUser
     this.setReadCursor = setReadCursor
-
-    console.log(this)
+    this.createRoom = createRoom
   }
 
   fetchMessages(room, direction = 'newer', initialId = null) {

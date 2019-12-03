@@ -8,11 +8,7 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID
 }
 
-// eslint-disable-next-line import/no-mutable-exports
-// let app = null
-
 const app = firebase.initializeApp(firebaseConfig)
 
-export const DB = app.database()
 export const auth = app.auth()
 export default app

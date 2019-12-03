@@ -16,9 +16,9 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <el-link type="info" href="/register">
-        Don't have account yet? Click here to register.
-      </el-link>
+      <nuxt-link :to="{ name: 'register' }">
+        <el-link type="info">Don't have account yet? Click here to register.</el-link>
+      </nuxt-link>
     </el-card>
   </div>
 </template>
@@ -26,7 +26,7 @@
 <script>
 import { auth } from 'firebase'
 import { mapActions } from 'vuex'
-import authRules from '../../rules/auth'
+import authRules from '../rules/auth'
 
 export default {
   name: 'Index',

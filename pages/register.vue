@@ -19,22 +19,20 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <el-link type="info" href="/">
-        Already have account? Click here to login.
-      </el-link>
+      <nuxt-link :to="{ name: 'login' }">
+        <el-link type="info">Already have account? Click here to login.</el-link>
+      </nuxt-link>
     </el-card>
   </div>
 </template>
 
 <script>
-import firebase from 'firebase'
 import { mapActions } from 'vuex'
+import { createUser as ChatCreateUser } from './../services/chatkit'
 import authRules from '@/rules/auth'
-import Chatkit from '@/services/chatkit'
+import { auth } from '@/services/firebase'
 
 export default {
-  name: 'Register',
-  middleware: ['guest'],
   data: () => ({
     registerData: {
       name: '',
@@ -45,8 +43,8 @@ export default {
     rules: authRules.register
   }),
   methods: {
-    ...mapActions({
-      loginUser: 'chat/login'
+    ...mapActions('chat', {
+      loginUser: 'login'
     }),
     async register() {
       const valid = await this.$refs.form.validate()
@@ -58,13 +56,13 @@ export default {
       this.loading = true
 
       try {
-        await firebase.auth().createUserWithEmailAndPassword(this.registerData.email, this.registerData.password)
+        await auth.createUserWithEmailAndPassword(this.registerData.email, this.registerData.password)
 
-        await firebase.auth().currentUser.updateProfile({
+        await auth.currentUser.updateProfile({
           displayName: this.registerData.name
         })
 
-        await Chatkit.createUser(this.registerData.email, this.registerData.name)
+        await ChatCreateUser(this.registerData.email, this.registerData.name)
 
         await this.loginUser(this.registerData.email)
 

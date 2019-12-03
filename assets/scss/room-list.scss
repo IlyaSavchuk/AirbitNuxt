@@ -1,0 +1,83 @@
+.users-list {
+  flex: 0 1 100%;
+  overflow-y: auto;
+
+  @include scroll;
+
+  &__item {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-bottom: 1px solid #eee;
+    border-right: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    color: #808c94;
+    transition: .2s;
+
+    &:hover {
+      background-color: ghostwhite;
+    }
+
+    &_active {
+      background-color: $scroll-background;
+    }
+
+    @media (max-width: 540px) {
+      &-text{
+        display: none;
+      }
+    }
+  }
+}
+
+
+.room-list {
+  flex: 0 1 100%;
+  overflow-y: auto;
+
+  @include scroll();
+
+  &-item {
+    width: 100%;
+    padding: 20px 20px 20px 35px;
+    transition: 0.2s;
+
+    &:hover {
+      background: #eee;
+      cursor: pointer;
+    }
+
+    .status {
+      position: relative;
+
+      > sup {
+        position: absolute;
+        top: 8px;
+        right: calc( 100% + 15px ) !important;
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .unread {
+      width: 100%;
+      > sup {
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        left: calc(100% - 15px);
+        width: 30px;
+        height: 30px;
+        transform: none;
+        border-radius: 50%;
+        padding: 5px;
+      }
+    }
+
+    &.active {
+      background: #585353;
+      color: #fff;
+    }
+  }
+}
