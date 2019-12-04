@@ -4,7 +4,7 @@
       <h2 class="register__title">Login</h2>
       <el-form ref="form" :model="loginData" :rules="rules" @submit.native.prevent="login" class="register__form">
         <el-form-item prop="email">
-          <el-input v-model="loginData.email" placeholder="Email" prefix-icon="el-icon-user"> </el-input>
+          <el-input v-model="loginData.email" placeholder="Email" prefix-icon="el-icon-user" />
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="loginData.password" prefix-icon="el-icon-setting" placeholder="Password" show-password>
@@ -53,7 +53,6 @@ export default {
 
       try {
         await auth().signInWithEmailAndPassword(this.loginData.email, this.loginData.password)
-
         await this.loginUser(this.loginData.email)
 
         this.$router.push('messages')

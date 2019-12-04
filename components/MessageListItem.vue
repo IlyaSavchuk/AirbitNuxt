@@ -2,8 +2,6 @@
   <div :class="{ messages__item_me: my }" :title="presentDate" class="messages__item">
     <el-card v-html="text" class="messages__item-text" />
     <span class="messages__item-date">{{ relativeDate }}</span>
-    <!--    {{ iteration }}-->
-    <!--    {{ $moment.duration(delay).asSeconds() }}-->
   </div>
 </template>
 
@@ -47,17 +45,6 @@ export default {
     },
     update() {
       this.updateDate()
-      // function updateDelay(delay) {
-      //   if (delay < 60000) {
-      //     return 1000
-      //   } else if (delay < 3600000) {
-      //     return 60000
-      //   } else if (delay < 43200000) {
-      //     return 3600000
-      //   } else {
-      //     return 86400000
-      //   }
-      // }
       this.delay = this.updateDelay(this.delay, this.iteration)
 
       this.iteration++

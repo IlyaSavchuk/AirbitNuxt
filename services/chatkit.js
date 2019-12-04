@@ -14,7 +14,7 @@ export default (userId, handlers) => {
     userId
   })
 
-  const currentUser = chatManager.connect({
+  return chatManager.connect({
     onAddedToRoom: handlers.onAddedToRoom,
     onRemovedFromRoom: handlers.onRemovedFromRoom,
     onRoomUpdated: handlers.onRoomUpdated,
@@ -23,6 +23,4 @@ export default (userId, handlers) => {
     onUserStoppedTyping: handlers.onUserStoppedTyping,
     onPresenceChanged: handlers.onPresenceChanged
   })
-
-  return currentUser
 }

@@ -2,9 +2,9 @@
   <div @keyup.esc.exact.native="esc" class="chat">
     <el-alert v-if="error" title="error" type="error" center="" />
     <el-container>
-      <el-row :class="{ hide: showAside }" class="left-side">
+      <el-row :class="{ hide: asideIsHidden }" class="left-side">
         <el-row type="flex" justify="space-between" align="middle" class="chat__header chat__header_users">
-          <span>Messages</span>
+          <span>{{ currentUserName }}</span>
           <el-row>
             <el-button @click="logout" round size="small">Sign out</el-button>
             <el-badge :value="commonUnreadCount" :hidden="!commonUnreadCount" class="aside-button" is-dot>
@@ -15,14 +15,14 @@
         <el-row class="chat__header_add_room">
           <el-button @click="roomDialogToggle" size="small" round>Add room</el-button>
         </el-row>
-        <room-list />
+        <room-list @choose-room="hideAside" />
       </el-row>
       <el-container>
         <el-header class="chat__header chat__header_message">
           <messages-header>
             <template slot="button">
               <el-badge :value="commonUnreadCount" :hidden="!commonUnreadCount" is-dot class="aside-button">
-                <el-button @click="asideToggle" icon="el-icon-more" circle />
+                <el-button @click="asideToggle" icon="el-icon-arrow-left" circle />
               </el-badge>
             </template>
           </messages-header>
@@ -71,17 +71,20 @@ export default {
   middleware: 'isAuth',
   components: { MessageForm, MessageList, MessagesHeader, RoomList },
   data: () => ({
-    showAside: false,
+    asideIsHidden: false,
     addRoomDialogShow: false,
     createRoomData: {},
     createRoomLoading: false
   }),
   computed: {
-    ...mapState('chat', ['currentRoom', 'error']),
+    ...mapState('chat', ['user', 'currentRoom', 'error']),
     ...mapGetters('chat', ['commonUnreadCount']),
     ...mapGetters('chat', {
       users: 'otherUsers'
-    })
+    }),
+    currentUserName() {
+      return this.user.name
+    }
   },
   methods: {
     ...mapActions('auth', {
@@ -92,7 +95,10 @@ export default {
       createOwnRoom: 'createRoom'
     }),
     asideToggle() {
-      this.showAside = !this.showAside
+      this.asideIsHidden = !this.asideIsHidden
+    },
+    hideAside() {
+      this.asideIsHidden = true
     },
     roomDialogToggle() {
       this.addRoomDialogShow = !this.addRoomDialogShow
@@ -118,6 +124,7 @@ export default {
 <style lang="scss">
 .add_room-dialog {
   padding: 15px;
+
   &-name,
   &-user {
     width: 100%;

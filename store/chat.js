@@ -31,11 +31,13 @@ export const mutations = {
 }
 
 export const getters = {
-  getRooms: state => {
-    return state.user
-      ? [...state.user.rooms].sort((a, b) => (+new Date(a.lastMessageAt) < +new Date(b.lastMessageAt) ? 1 : -1))
-      : []
-  },
+  getRooms: state =>
+    [...state.user.rooms].sort((a, b) => {
+      const aDate = a.lastMessageAt ? a.lastMessageAt : a.createdAt
+      const bDate = b.lastMessageAt ? b.lastMessageAt : b.createdAt
+
+      return +new Date(aDate) < +new Date(bDate) ? 1 : -1
+    }),
   commonUnreadCount: state =>
     state.user.rooms ? state.user.rooms.map(room => room.unreadCount).reduce((sum, value) => sum + value, 0) : 0,
 
@@ -77,6 +79,7 @@ export const actions = {
 
     commit('addRoom', subscribeRoom)
   },
+  // TODO: events for future
   onRemovedFromRoom({ commit }, room) {},
   onRoomUpdated({ commit }, room) {},
   onRoomDeleted({ commit }, room) {},

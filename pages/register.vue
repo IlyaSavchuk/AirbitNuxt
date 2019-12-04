@@ -4,10 +4,10 @@
       <h2 class="register__title">Register</h2>
       <el-form ref="form" :model="registerData" :rules="rules" @submit.native.prevent="register" class="register__form">
         <el-form-item prop="name">
-          <el-input v-model="registerData.name" placeholder="Name" prefix-icon="el-icon-user"> </el-input>
+          <el-input v-model="registerData.name" placeholder="Name" prefix-icon="el-icon-user" />
         </el-form-item>
         <el-form-item prop="email">
-          <el-input v-model="registerData.email" placeholder="Email" prefix-icon="el-icon-message"> </el-input>
+          <el-input v-model="registerData.email" placeholder="Email" prefix-icon="el-icon-message" />
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="registerData.password" prefix-icon="el-icon-setting" placeholder="Password" show-password>
@@ -63,7 +63,6 @@ export default {
         })
 
         await ChatCreateUser(this.registerData.email, this.registerData.name)
-
         await this.loginUser(this.registerData.email)
 
         this.$router.push('messages')

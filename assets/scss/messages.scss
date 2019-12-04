@@ -20,7 +20,7 @@
     }
 
     &-text {
-      max-width: 60%;
+      max-width: 90%;
       min-width: 15%;
       display: inline-block;
       margin-bottom: 5px;
@@ -28,6 +28,7 @@
       color: #6e7a82;
       padding: 10px;
       white-space: pre-wrap;
+      word-break: break-all;
       font-size: 14px;
       line-height: 16px;
 
