@@ -7,8 +7,7 @@
           <el-input v-model="loginData.email" placeholder="Email" prefix-icon="el-icon-user" />
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginData.password" prefix-icon="el-icon-setting" placeholder="Password" show-password>
-          </el-input>
+          <el-input v-model="loginData.password" prefix-icon="el-icon-setting" placeholder="Password" show-password />
         </el-form-item>
         <el-form-item>
           <el-button :loading="loading" class="register__button" type="primary" native-type="submit" block
@@ -26,7 +25,8 @@
 <script>
 import { auth } from 'firebase'
 import { mapActions } from 'vuex'
-import authRules from '../rules/auth'
+import authRules from '@/rules/auth'
+import { email as validateEmail } from '@/rules/validate'
 
 export default {
   name: 'Index',
@@ -38,6 +38,9 @@ export default {
     loading: false,
     rules: authRules.login
   }),
+  created() {
+    this.setValidate()
+  },
   methods: {
     ...mapActions('chat', {
       loginUser: 'login'
@@ -61,6 +64,12 @@ export default {
       }
 
       this.loading = false
+    },
+    setValidate() {
+      this.rules.email.push({
+        validator: validateEmail,
+        trigger: 'blur'
+      })
     }
   }
 }

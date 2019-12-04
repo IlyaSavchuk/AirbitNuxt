@@ -31,6 +31,7 @@ import { mapActions } from 'vuex'
 import { createUser as ChatCreateUser } from './../services/chatkit'
 import authRules from '@/rules/auth'
 import { auth } from '@/services/firebase'
+import { email as validateEmail, name as validateName } from '@/rules/validate'
 
 export default {
   data: () => ({
@@ -42,6 +43,9 @@ export default {
     loading: false,
     rules: authRules.register
   }),
+  created() {
+    this.setValidate()
+  },
   methods: {
     ...mapActions('chat', {
       loginUser: 'login'
@@ -71,6 +75,18 @@ export default {
       }
 
       this.loading = false
+    },
+
+    setValidate() {
+      this.rules.email.push({
+        validator: validateEmail,
+        trigger: 'blur'
+      })
+
+      this.rules.name.push({
+        validator: validateName,
+        trigger: 'blur'
+      })
     }
   }
 }
