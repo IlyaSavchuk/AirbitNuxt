@@ -5,7 +5,7 @@ const roomsConstructor = (rooms, subscribeToRoomMultipart, onMessage) =>
       hooks: {
         onMessage
       },
-      messageLimit: 10
+      messageLimit: 20
     })
 
     room.messages = []
@@ -48,7 +48,7 @@ export default class User {
     const params = {
       roomId: room.id,
       direction,
-      limit: 50
+      limit: 20
     }
 
     if (initialId) params.initialId = initialId

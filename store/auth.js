@@ -1,4 +1,4 @@
-import app from '@/services/firebase'
+import { auth } from '@/services/firebase'
 
 export const state = () => ({
   user: null,
@@ -20,7 +20,7 @@ export const actions = {
     commit('setAuthenticated', true)
   },
   async logout({ commit }) {
-    await app.auth().signOut()
+    await auth.signOut()
 
     commit('setUser', null)
     commit('setAuthenticated', false)

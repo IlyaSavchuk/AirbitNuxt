@@ -28,7 +28,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { createUser as ChatCreateUser } from './../services/chatkit'
+import { createUser as ChatCreateUser } from '@/services/pusher'
 import authRules from '@/rules/auth'
 import { auth } from '@/services/firebase'
 import { email as validateEmail, name as validateName } from '@/rules/validate'

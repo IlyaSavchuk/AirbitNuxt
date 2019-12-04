@@ -13,7 +13,7 @@
           </el-row>
         </el-row>
         <el-row class="chat__header_add_room">
-          <el-button @click="roomDialogToggle" size="small" round>Add room</el-button>
+          <el-button @click="roomDialogShow" size="small" round>Add room</el-button>
         </el-row>
         <room-list @choose-room="hideAside" />
       </el-row>
@@ -33,55 +33,25 @@
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog
-      :visible.sync="addRoomDialogShow"
-      @open="getUsers"
-      title="Add room"
-      width="300px"
-      class="add_room-dialog"
-    >
-      <span class="dialog-footer">
-        <el-form>
-          <el-form-item>
-            <el-input
-              v-model="createRoomData.name"
-              placeholder="Name"
-              prefix-icon="el-icon-user"
-              class="add_room-dialog-name"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-select v-model="createRoomData.userId" placeholder="User" class="add_room-dialog-user">
-              <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <el-button @click="createRoom" :loading="createRoomLoading" type="primary">Add</el-button>
-      </span>
-    </el-dialog>
+    <add-room v-model="addRoomDialogShow" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
-import { MessageForm, MessageList, MessagesHeader, RoomList } from '@/components'
+import { MessageForm, MessageList, MessagesHeader, RoomList, AddRoom } from '@/components'
 
 export default {
   name: 'Messages',
   middleware: 'isAuth',
-  components: { MessageForm, MessageList, MessagesHeader, RoomList },
+  components: { AddRoom, MessageForm, MessageList, MessagesHeader, RoomList },
   data: () => ({
     asideIsHidden: false,
-    addRoomDialogShow: false,
-    createRoomData: {},
-    createRoomLoading: false
+    addRoomDialogShow: false
   }),
   computed: {
     ...mapState('chat', ['user', 'currentRoom', 'error']),
     ...mapGetters('chat', ['commonUnreadCount']),
-    ...mapGetters('chat', {
-      users: 'otherUsers'
-    }),
     currentUserName() {
       return this.user.name
     }
@@ -100,23 +70,24 @@ export default {
     hideAside() {
       this.asideIsHidden = true
     },
-    roomDialogToggle() {
-      this.addRoomDialogShow = !this.addRoomDialogShow
+    roomDialogShow() {
+      this.addRoomDialogShow = true
     },
     logout() {
       this.logoutUser()
       this.$router.push({ name: 'login' })
     },
     async createRoom() {
+      const valid = await this.$refs.addRoomForm.validate()
+
+      if (!valid) return
+
       this.createRoomLoading = true
       await this.createOwnRoom({ name: this.createRoomData.name, userId: this.createRoomData.userId })
 
       this.roomDialogToggle()
-
+      this.createRoomData = {}
       this.createRoomLoading = false
-    },
-    esc(e) {
-      console.log(e)
     }
   }
 }

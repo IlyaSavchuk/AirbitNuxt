@@ -1,8 +1,8 @@
-import app from '@/services/firebase'
+import { auth } from '@/services/firebase'
 
 export default ({ store }) => {
   return new Promise(resolve => {
-    app.auth().onAuthStateChanged(user => {
+    auth.onAuthStateChanged(user => {
       if (user) {
         const userData = {
           name: user.displayName,

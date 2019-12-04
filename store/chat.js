@@ -1,12 +1,11 @@
-import ChatKit, { getUsers } from '@/services/chatkit'
+import ChatKit from '@/services/chatkit'
 import User from '@/models/User'
 
 export const state = () => ({
   user: {
     rooms: []
   },
-  currentRoom: '',
-  users: []
+  currentRoom: ''
 })
 
 export const mutations = {
@@ -16,18 +15,15 @@ export const mutations = {
 
   addRoom: (state, room) => state.user.rooms.push(room),
 
-  addMessagesToRoom: (state, { roomId, messages }) =>
-    state.user.rooms.find(room => room.id === roomId).messages.push(...messages),
+  addMessagesToRoom: (state, { roomId, messages, direction }) => {
+    const roomMessages = state.user.rooms.find(room => room.id === roomId).messages
+    direction === 'newer' ? roomMessages.push(...messages) : roomMessages.unshift(...messages)
+  },
 
   addMessageToRoom: (state, { roomId, message }) => {
     const room = state.user.rooms.find(room => room.id === roomId)
     room.messages.push(message)
-  },
-
-  addOldMessageToRoom: (state, { roomId, message }) =>
-    state.user.rooms.find(room => room.id === roomId).messages.unshift(message),
-
-  setUsers: (state, users) => (state.users = [...users])
+  }
 }
 
 export const getters = {
@@ -38,10 +34,15 @@ export const getters = {
 
       return +new Date(aDate) < +new Date(bDate) ? 1 : -1
     }),
-  commonUnreadCount: state =>
-    state.user.rooms ? state.user.rooms.map(room => room.unreadCount).reduce((sum, value) => sum + value, 0) : 0,
 
-  otherUsers: state => state.users.filter(user => user.id !== state.user.id)
+  getMessages: state => {
+    if (state.currentRoom)
+      return [...state.currentRoom.messages].sort((a, b) => (+new Date(a.createdAt) > +new Date(b.createdAt) ? 1 : -1))
+    return []
+  },
+
+  commonUnreadCount: state =>
+    state.user.rooms ? state.user.rooms.map(room => room.unreadCount).reduce((sum, value) => sum + value, 0) : 0
 }
 
 export const actions = {
@@ -72,14 +73,14 @@ export const actions = {
       hooks: {
         onMessage: message => dispatch('onMessage', message)
       },
-      messageLimit: 10
+      messageLimit: 20
     })
 
     subscribeRoom.messages = []
 
     commit('addRoom', subscribeRoom)
   },
-  // TODO: events for future
+
   onRemovedFromRoom({ commit }, room) {},
   onRoomUpdated({ commit }, room) {},
   onRoomDeleted({ commit }, room) {},
@@ -96,19 +97,15 @@ export const actions = {
 
   async chooseRoom({ commit, dispatch }, room) {
     commit('setCurrentRoom', room)
-    const messages = await dispatch('fetchMessages', room)
-    dispatch('fillRoomMessages', { room, messages })
+    await dispatch('fetchMessages', { room, direction: 'newer' })
   },
 
-  async fetchMessages({ state, commit, dispatch }, room) {
-    const messages = await state.user.fetchMessages(room)
-    return messages
-  },
-
-  async fetchOldMessages({ state, commit }) {
-    const messages = await state.user.fetchMessages(state.currentRoom, 'older', state.currentRoom.messages[0].id)
-
-    commit('addOldMessageToRoom', { roomId: state.currentRoom.id, messages })
+  fetchMessages({ state, commit, dispatch }, { room, direction, initialId }) {
+    return new Promise(async resolve => {
+      const messages = await state.user.fetchMessages(room, direction, initialId)
+      if (messages.length) dispatch('fillRoomMessages', { room, direction, messages })
+      resolve(messages)
+    })
   },
 
   fillRoomMessages({ state, commit }, { room, messages }) {
@@ -121,11 +118,6 @@ export const actions = {
 
   setReadMessage({ state }, message) {
     state.user.setReadMessage(state.currentRoom, message)
-  },
-
-  async getUsers({ state, commit }) {
-    const { data } = await getUsers()
-    commit('setUsers', data.users)
   },
 
   async createRoom({ state, dispatch }, { name, userId }) {

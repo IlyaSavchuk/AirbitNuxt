@@ -15,7 +15,7 @@
           class="unread"
         >
           <el-row>
-            <el-badge :max="99" :hidden="!getStatus(room)" is-dot type="success" class="status">
+            <el-badge :max="99" :hidden="!isUserOnline(room)" is-dot type="success" class="status">
               {{ room.name }}
             </el-badge>
           </el-row>
@@ -50,7 +50,7 @@ export default {
     getRecipient(room) {
       return room.userIds.find(user => user !== this.user.id)
     },
-    getStatus(room) {
+    isUserOnline(room) {
       const user = room.users.find(user => user.id !== this.user.id)
       if (!user) return false
 
@@ -58,10 +58,6 @@ export default {
     },
     lastMessageAt(room) {
       return this.$moment(room.lastMessageAt).format('DD-MM-YYYY HH:mm:ss')
-    },
-    getLastActive(room) {
-      const user = room.users.find(user => user.id !== this.user.id)
-      if (!user) return null
     },
     activeRoom(roomId) {
       return roomId === this.currentRoom.id
