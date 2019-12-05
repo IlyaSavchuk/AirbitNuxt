@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" @close="close" title="Add room" width="300px" class="add_room-dialog">
+  <el-dialog :visible="visible" @close="close" title="Add room" width="300px" class="add_room-dialog">
     <span class="dialog-footer">
       <el-form ref="addRoomForm" :rules="roomAddRule" :model="createRoomData">
         <el-form-item prop="name">
@@ -23,15 +23,11 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { getUsers } from '../services/pusher'
+import { getUsers } from '@/services/pusher'
 import { name as validateName } from '@/rules/validate'
 import rule from '@/rules/room'
 
 export default {
-  model: {
-    prop: 'visible',
-    event: 'close'
-  },
   props: {
     visible: {
       default: false
@@ -44,31 +40,34 @@ export default {
     dialogVisible: false,
     users: []
   }),
+  watch: {
+    visible(value) {
+      if (value) this.getAndFilterUsers()
+    }
+  },
   computed: {
     ...mapState('chat', ['user']),
     otherUsers() {
       return this.users.filter(user => user.id !== this.user.id)
     }
   },
-  watch: {
-    visible() {
-      this.updateDialogVisible(this.visible)
-    }
-  },
   created() {
     this.updateDialogVisible(this.visible)
     this.setValidate()
-    this.getAndFilterUsers()
   },
   methods: {
     ...mapActions('chat', {
       createOwnRoom: 'createRoom'
     }),
     async getAndFilterUsers() {
-      const {
-        data: { users }
-      } = await getUsers()
-      this.users = users
+      try {
+        const {
+          data: { users }
+        } = await getUsers()
+        this.users = users
+      } catch (e) {
+        this.$message.warning(e)
+      }
     },
     async createRoom() {
       const valid = await this.$refs.addRoomForm.validate()

@@ -33,7 +33,7 @@
         </el-main>
       </el-container>
     </el-container>
-    <add-room v-model="addRoomDialogShow" />
+    <add-room :visible="addRoomDialogShow" @close="roomDialogHide" />
   </div>
 </template>
 
@@ -61,9 +61,6 @@ export default {
       logoutUser: 'logout'
     }),
     ...mapActions('chat', ['getUsers']),
-    ...mapActions('chat', {
-      createOwnRoom: 'createRoom'
-    }),
     asideToggle() {
       this.asideIsHidden = !this.asideIsHidden
     },
@@ -73,21 +70,12 @@ export default {
     roomDialogShow() {
       this.addRoomDialogShow = true
     },
+    roomDialogHide() {
+      this.addRoomDialogShow = false
+    },
     logout() {
       this.logoutUser()
       this.$router.push({ name: 'login' })
-    },
-    async createRoom() {
-      const valid = await this.$refs.addRoomForm.validate()
-
-      if (!valid) return
-
-      this.createRoomLoading = true
-      await this.createOwnRoom({ name: this.createRoomData.name, userId: this.createRoomData.userId })
-
-      this.roomDialogToggle()
-      this.createRoomData = {}
-      this.createRoomLoading = false
     }
   }
 }

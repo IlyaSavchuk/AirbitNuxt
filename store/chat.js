@@ -32,7 +32,7 @@ export const getters = {
       const aDate = a.lastMessageAt ? a.lastMessageAt : a.createdAt
       const bDate = b.lastMessageAt ? b.lastMessageAt : b.createdAt
 
-      return +new Date(aDate) < +new Date(bDate) ? 1 : -1
+      return +new Date(aDate) - +new Date(bDate)
     }),
 
   getMessages: state => {
